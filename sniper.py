@@ -92,9 +92,19 @@ def validate_env():
 
 
 def get_oci_clients():
+    cleaned_key = clean_pem_key(KEY_CONTENT)
+    if not cleaned_key:
+        log("CHYBA: OCI_KEY_CONTENT je prázdný!")
+        sys.exit(1)
+
+    log(f"Klíč načten (délka: {len(cleaned_key)} znaků).")
+    header_preview = cleaned_key[:27].replace('\n', ' ')
+    footer_preview = cleaned_key[-27:].replace('\n', ' ')
+    log(f"Formát klíče: začátek='{header_preview}' ... konec='{footer_preview}'")
+
     config = {
         "user": USER_OCID,
-        "key_content": clean_pem_key(KEY_CONTENT),
+        "key_content": cleaned_key,
         "fingerprint": FINGERPRINT,
         "tenancy": TENANCY_OCID,
         "region": REGION
