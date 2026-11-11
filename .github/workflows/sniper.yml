@@ -28,6 +28,14 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Prepare OCI Key File
+        run: |
+          mkdir -p ~/.oci
+          cat << 'EOF' > ~/.oci/oci_api_key.pem
+          ${{ secrets.OCI_KEY_CONTENT }}
+          EOF
+          chmod 600 ~/.oci/oci_api_key.pem
+
       - name: Run Sniper
         env:
           OCI_USER_OCID: ${{ secrets.OCI_USER_OCID }}

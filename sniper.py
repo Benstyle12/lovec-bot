@@ -35,6 +35,17 @@ USER_OCID = os.environ.get("OCI_USER_OCID")
 TENANCY_OCID = os.environ.get("OCI_TENANCY_OCID")
 FINGERPRINT = os.environ.get("OCI_FINGERPRINT")
 KEY_CONTENT = os.environ.get("OCI_KEY_CONTENT")
+KEY_FILE_PATH = os.path.expanduser("~/.oci/oci_api_key.pem")
+
+if os.path.exists(KEY_FILE_PATH) and os.path.getsize(KEY_FILE_PATH) > 0:
+    try:
+        with open(KEY_FILE_PATH, "r", encoding="utf-8") as f:
+            file_key = f.read().strip()
+            if len(file_key) > 50:
+                KEY_CONTENT = file_key
+    except Exception as e:
+        pass
+
 REGION = os.environ.get("OCI_REGION", "eu-turin-1")
 
 COMPARTMENT_OCID = os.environ.get("OCI_COMPARTMENT_OCID") or TENANCY_OCID
