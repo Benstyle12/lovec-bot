@@ -2,6 +2,7 @@ import os
 import sys
 import time
 import requests
+import re
 import oci
 from datetime import datetime
 
@@ -10,6 +11,22 @@ if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 if hasattr(sys.stderr, "reconfigure"):
     sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+
+def clean_pem_key(k):
+    if not k:
+        return k
+    k = k.strip()
+    k = k.replace("\\n", "\n").replace("\r\n", "\n").replace("\r", "\n")
+    m = re.search(r"(-----BEGIN [A-Z ]+-----)(.*?)(-----END [A-Z ]+-----)", k, re.DOTALL)
+    if m:
+        header = m.group(1).strip()
+        body = m.group(2).replace(" ", "").replace("\n", "").strip()
+        footer = m.group(3).strip()
+        chunks = [body[i:i+64] for i in range(0, len(body), 64)]
+        return header + "\n" + "\n".join(chunks) + "\n" + footer + "\n"
+    if not k.endswith("\n"):
+        k += "\n"
+    return k
 
 # ==========================================
 # KONFIGURACE Z ENVIRONMENT VARIABLES
@@ -77,7 +94,7 @@ def validate_env():
 def get_oci_clients():
     config = {
         "user": USER_OCID,
-        "key_content": KEY_CONTENT,
+        "key_content": clean_pem_key(KEY_CONTENT),
         "fingerprint": FINGERPRINT,
         "tenancy": TENANCY_OCID,
         "region": REGION
