@@ -49,8 +49,8 @@ IMAGE_OCID = os.environ.get("OCI_IMAGE_OCID")
 AVAILABILITY_DOMAIN = os.environ.get("OCI_AVAILABILITY_DOMAIN")
 SSH_PUBLIC_KEY = os.environ.get("OCI_SSH_PUBLIC_KEY", "")
 
-OCPUS = float(os.environ.get("INSTANCE_OCPUS", "2"))
-MEMORY_IN_GBS = float(os.environ.get("INSTANCE_MEMORY_GBS", "12"))
+OCPUS = float(os.environ.get("INSTANCE_OCPUS", "1"))
+MEMORY_IN_GBS = float(os.environ.get("INSTANCE_MEMORY_GBS", "6"))
 BOOT_VOLUME_GB = int(os.environ.get("BOOT_VOLUME_GB", "50"))
 INSTANCE_NAME = os.environ.get("INSTANCE_NAME", "oracle-free-ampere")
 

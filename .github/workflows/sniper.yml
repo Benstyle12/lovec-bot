@@ -52,8 +52,8 @@ jobs:
           OCI_IMAGE_OCID: ${{ secrets.OCI_IMAGE_OCID }}
           OCI_AVAILABILITY_DOMAIN: ${{ secrets.OCI_AVAILABILITY_DOMAIN }}
           OCI_SSH_PUBLIC_KEY: ${{ secrets.OCI_SSH_PUBLIC_KEY }}
-          INSTANCE_OCPUS: ${{ vars.INSTANCE_OCPUS || '2' }}
-          INSTANCE_MEMORY_GBS: ${{ vars.INSTANCE_MEMORY_GBS || '12' }}
+          INSTANCE_OCPUS: ${{ vars.INSTANCE_OCPUS || '1' }}
+          INSTANCE_MEMORY_GBS: ${{ vars.INSTANCE_MEMORY_GBS || '6' }}
           BOOT_VOLUME_GB: ${{ vars.BOOT_VOLUME_GB || '50' }}
           MAX_RUNTIME_MINUTES: 28
           RETRY_DELAY_SECONDS: 20
