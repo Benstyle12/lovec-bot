@@ -5,6 +5,12 @@ import requests
 import oci
 from datetime import datetime
 
+# Zajistit bezchybný výpis UTF-8 znaků (emojis a čeština) na všech systémech
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+if hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+
 # ==========================================
 # KONFIGURACE Z ENVIRONMENT VARIABLES
 # ==========================================
