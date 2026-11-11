@@ -59,7 +59,7 @@ TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID")
 
 MAX_RUNTIME_MINUTES = int(os.environ.get("MAX_RUNTIME_MINUTES", "28"))
-RETRY_DELAY_SECONDS = int(os.environ.get("RETRY_DELAY_SECONDS", "35"))
+RETRY_DELAY_SECONDS = int(os.environ.get("RETRY_DELAY_SECONDS", "45"))
 
 
 def log(msg):

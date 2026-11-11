@@ -56,7 +56,7 @@ jobs:
           INSTANCE_MEMORY_GBS: ${{ vars.INSTANCE_MEMORY_GBS || '1' }}
           BOOT_VOLUME_GB: ${{ vars.BOOT_VOLUME_GB || '50' }}
           MAX_RUNTIME_MINUTES: 28
-          RETRY_DELAY_SECONDS: 35
+          RETRY_DELAY_SECONDS: 45
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
