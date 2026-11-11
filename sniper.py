@@ -292,7 +292,8 @@ def main():
                 if "Out of host capacity" in str(e) or e.status in (500, 502, 503) or "capacity" in str(e).lower():
                     log(f"⏳ Kapacita v {ad} je stále vyčerpaná (Out of host capacity).")
                 elif "LimitExceeded" in str(e) or "TooManyRequests" in str(e) or e.status == 429:
-                    log(f"⚠️ Rate limit nebo limit překročen: {e.message}")
+                    log(f"⚠️ Rate limit (Oracle omezuje rychlost). Čekám 45 sekund na uvolnění...")
+                    time.sleep(45)
                 else:
                     log(f"❌ OCI Chyba ({e.status} - {e.code}): {e.message}")
             except Exception as e:
