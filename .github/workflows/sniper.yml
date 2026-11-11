@@ -53,10 +53,10 @@ jobs:
           OCI_AVAILABILITY_DOMAIN: ${{ secrets.OCI_AVAILABILITY_DOMAIN }}
           OCI_SSH_PUBLIC_KEY: ${{ secrets.OCI_SSH_PUBLIC_KEY }}
           INSTANCE_OCPUS: ${{ vars.INSTANCE_OCPUS || '1' }}
-          INSTANCE_MEMORY_GBS: ${{ vars.INSTANCE_MEMORY_GBS || '6' }}
+          INSTANCE_MEMORY_GBS: ${{ vars.INSTANCE_MEMORY_GBS || '1' }}
           BOOT_VOLUME_GB: ${{ vars.BOOT_VOLUME_GB || '50' }}
           MAX_RUNTIME_MINUTES: 28
-          RETRY_DELAY_SECONDS: 20
+          RETRY_DELAY_SECONDS: 35
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}

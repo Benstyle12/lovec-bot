@@ -50,7 +50,7 @@ AVAILABILITY_DOMAIN = os.environ.get("OCI_AVAILABILITY_DOMAIN")
 SSH_PUBLIC_KEY = os.environ.get("OCI_SSH_PUBLIC_KEY", "")
 
 OCPUS = float(os.environ.get("INSTANCE_OCPUS", "1"))
-MEMORY_IN_GBS = float(os.environ.get("INSTANCE_MEMORY_GBS", "6"))
+MEMORY_IN_GBS = float(os.environ.get("INSTANCE_MEMORY_GBS", "1"))
 BOOT_VOLUME_GB = int(os.environ.get("BOOT_VOLUME_GB", "50"))
 INSTANCE_NAME = os.environ.get("INSTANCE_NAME", "oracle-free-ampere")
 
@@ -59,7 +59,7 @@ TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID")
 
 MAX_RUNTIME_MINUTES = int(os.environ.get("MAX_RUNTIME_MINUTES", "28"))
-RETRY_DELAY_SECONDS = int(os.environ.get("RETRY_DELAY_SECONDS", "20"))
+RETRY_DELAY_SECONDS = int(os.environ.get("RETRY_DELAY_SECONDS", "35"))
 
 
 def log(msg):
@@ -240,6 +240,9 @@ def main():
     log(f"Region: {REGION}")
     log("==================================================")
 
+    # Poslat info o startu směny na Telegram
+    send_notification(f"🏹 Začíná nová směna lovu ({MAX_RUNTIME_MINUTES} min)! Hledám {int(OCPUS)} OCPU a {int(MEMORY_IN_GBS)} GB RAM v {REGION}.")
+
     compute_client, identity_client, vn_client = get_oci_clients()
     
     subnet_id = resolve_subnet(vn_client)
@@ -294,8 +297,8 @@ def main():
                 if "Out of host capacity" in str(e) or e.status in (500, 502, 503) or "capacity" in str(e).lower():
                     log(f"⏳ Kapacita v {ad} je stále vyčerpaná (Out of host capacity).")
                 elif "LimitExceeded" in str(e) or "TooManyRequests" in str(e) or e.status == 429:
-                    log(f"⚠️ Rate limit (Oracle omezuje rychlost). Čekám 45 sekund na uvolnění...")
-                    time.sleep(45)
+                    log(f"⚠️ Rate limit (Oracle omezuje rychlost). Čekám 60 sekund na uvolnění...")
+                    time.sleep(60)
                 else:
                     log(f"❌ OCI Chyba ({e.status} - {e.code}): {e.message}")
             except Exception as e:
