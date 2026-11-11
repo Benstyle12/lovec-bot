@@ -12,7 +12,7 @@ permissions:
 
 concurrency:
   group: oci-sniper
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   snipe:
