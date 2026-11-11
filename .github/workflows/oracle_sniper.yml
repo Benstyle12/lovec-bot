@@ -72,5 +72,5 @@ jobs:
             echo "🎉 Instance byla úspěšně ulovena! Řetězové spouštění zastaveno."
           else
             echo "🚀 Instance ještě nebyla ulovena. Spouštím další 28minutovou směnu okamžitě..."
-            gh workflow run sniper.yml || echo "Nelze spustit přes gh cli, plánovač cron to pokryje."
+            gh workflow run oracle_sniper.yml || echo "Nelze spustit přes gh cli, plánovač cron to pokryje."
           fi
