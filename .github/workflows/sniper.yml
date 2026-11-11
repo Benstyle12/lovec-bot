@@ -2,9 +2,13 @@ name: OCI Instance Sniper
 
 on:
   schedule:
-    # Běží každých 30 minut (GitHub cron)
+    # Běží každých 30 minut (jako pojistka)
     - cron: '*/30 * * * *'
   workflow_dispatch: # Možnost spustit ručně tlačítkem v GitHubu
+
+permissions:
+  actions: write
+  contents: read
 
 concurrency:
   group: oci-sniper
@@ -58,3 +62,15 @@ jobs:
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
           python sniper.py
+
+      - name: Retrigger next shift immediately
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ -f INSTANCE_FOUND.txt ]; then
+            echo "🎉 Instance byla úspěšně ulovena! Řetězové spouštění zastaveno."
+          else
+            echo "🚀 Instance ještě nebyla ulovena. Spouštím další 28minutovou směnu okamžitě..."
+            gh workflow run sniper.yml || echo "Nelze spustit přes gh cli, plánovač cron to pokryje."
+          fi

@@ -285,6 +285,8 @@ def main():
                 )
                 log(msg)
                 send_notification(msg)
+                with open("INSTANCE_FOUND.txt", "w") as f:
+                    f.write("FOUND")
                 print("::notice title=Instance Created::Instance was successfully created in Oracle Cloud!")
                 sys.exit(0)
 
