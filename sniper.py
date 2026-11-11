@@ -17,16 +17,10 @@ def clean_pem_key(k):
         return k
     k = k.strip()
     k = k.replace("\\n", "\n").replace("\r\n", "\n").replace("\r", "\n")
-    m = re.search(r"(-----BEGIN [A-Z ]+-----)(.*?)(-----END [A-Z ]+-----)", k, re.DOTALL)
-    if m:
-        header = m.group(1).strip()
-        body = m.group(2).replace(" ", "").replace("\n", "").strip()
-        footer = m.group(3).strip()
-        chunks = [body[i:i+64] for i in range(0, len(body), 64)]
-        return header + "\n" + "\n".join(chunks) + "\n" + footer + "\n"
-    if not k.endswith("\n"):
-        k += "\n"
-    return k
+    # Filtrujeme případné zbloudilé řádky a vytáhneme tělo klíče
+    lines = [l.strip() for l in k.splitlines() if l.strip() and not l.startswith("-----") and l.strip() != "OCI_API_KEY"]
+    body = "\n".join(lines)
+    return "-----BEGIN PRIVATE KEY-----\n" + body + "\n-----END PRIVATE KEY-----\n"
 
 # ==========================================
 # KONFIGURACE Z ENVIRONMENT VARIABLES
@@ -310,4 +304,11 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as e:
+        import traceback
+        err_details = traceback.format_exc()
+        log(f"KRITICKÁ CHYBA:\n{err_details}")
+        send_notification(f"❌ Chyba při spuštění bota:\n{str(e)[:300]}")
+        sys.exit(1)
