@@ -3,6 +3,8 @@ import sys
 import time
 import requests
 import re
+import atexit
+import signal
 import oci
 from datetime import datetime
 
@@ -11,6 +13,25 @@ if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 if hasattr(sys.stderr, "reconfigure"):
     sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+
+INSTANCE_ACQUIRED = False
+
+def notify_shutdown():
+    if not INSTANCE_ACQUIRED:
+        send_notification("⚠️ UPOZORNĚNÍ: Lovec na PC byl zastaven (PC se vypíná nebo byl proces ukončen)!")
+
+atexit.register(notify_shutdown)
+
+def signal_handler(sig, frame):
+    log("Zachycen signál k ukončení. Posílám notifikaci...")
+    notify_shutdown()
+    sys.exit(0)
+
+try:
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
+except Exception:
+    pass
 
 def clean_pem_key(k):
     if not k:
@@ -241,7 +262,7 @@ def main():
     log("==================================================")
 
     # Poslat info o startu směny na Telegram
-    send_notification(f"🏹 Začíná nová směna lovu ({MAX_RUNTIME_MINUTES} min)! Hledám {int(OCPUS)} OCPU a {int(MEMORY_IN_GBS)} GB RAM v {REGION}.")
+    send_notification(f"🚀 Počítač zapnut / Lovec spuštěn! Začínám lovit {int(OCPUS)} OCPU a {int(MEMORY_IN_GBS)} GB RAM v {REGION}.")
 
     compute_client, identity_client, vn_client = get_oci_clients()
     
@@ -277,6 +298,7 @@ def main():
             try:
                 response = create_instance(compute_client, ad, subnet_id, image_id)
                 instance = response.data
+                INSTANCE_ACQUIRED = True
                 msg = (
                     f"🎉🎉 BOOM! INSTANCE ÚSPĚŠNĚ VYTVOŘENA! 🎉🎉\n"
                     f"Název: {instance.display_name}\n"
@@ -296,6 +318,9 @@ def main():
             except oci.exceptions.ServiceError as e:
                 if "Out of host capacity" in str(e) or e.status in (500, 502, 503) or "capacity" in str(e).lower():
                     log(f"⏳ Kapacita v {ad} je stále vyčerpaná (Out of host capacity).")
+                    # Každých 40 pokusů (cca 30 minut) pošle ping na Telegram, že bot žije
+                    if attempt % 40 == 0:
+                        send_notification(f"⏳ Bot stále aktivně loví (Pokus #{attempt}). Kapacita je zatím plná, pokračuji dál...")
                 elif "LimitExceeded" in str(e) or "TooManyRequests" in str(e) or e.status == 429:
                     log(f"⚠️ Rate limit (Oracle omezuje rychlost). Čekám 60 sekund na uvolnění...")
                     time.sleep(60)
